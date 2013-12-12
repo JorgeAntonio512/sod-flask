@@ -1,0 +1,16 @@
+<title>State of Debate</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<div class=page>
+  <h1>Create A Debate</h1>
+  <div class=metanav>
+    <a href="{{ url_for('show_entries') }}">back</a>
+  </div>
+<form action="{{ url_for('add_entry') }}" method=post class=add-entry>
+      <dl>
+        <dt>Title of debate:
+        <dd><input type=text size=30 name=title>
+        <dt>Debate:
+        <dd><textarea name=text rows=5 cols=40></textarea>
+        <dd><input type=submit value=Share>
+      </dl>
+    </form>
