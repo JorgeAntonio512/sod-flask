@@ -52,11 +52,11 @@ def add_entry():
 
 @app.route('/debate/<int:entries_id>')
 def debate_page(entries_id):
-    query = 'select title, text from entries where id = "{}"'.format(entries_id)
+    query = 'select title, text from entries where id = "{0}"'.format(entries_id)
     cur = g.db.execute(query)
     db_result = cur.fetchall()
     entries = [dict(title=row[0], text=row[1]) for row in db_result]
-    return render_template('show_entries.html', entries=entries)
+    return render_template('debate_page.html', entries=entries)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -80,5 +80,5 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=10080)
 

@@ -1,0 +1,16 @@
+<title>State of Debate</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<div class=page>
+  {% for entry in entries %}  
+      <h1>{{ entry.title }}</h1>
+    {% endfor %}
+  <div class=metanav>
+    <a href="{{ url_for('show_entries') }}">back</a>
+  </div>
+ <ul class=entries> 
+  {% for entry in entries %}
+    {{ entry.text|safe }}
+  {% endfor %}
+  </ul>
+
+
