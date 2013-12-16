@@ -9,8 +9,20 @@
   </div>
  <ul class=entries> 
   {% for entry in entries %}
-    {{ entry.text|safe }}
+    <li>{{ entry.text|safe }}</li>
+    <li><h2>{{ entry.sidea }}{{ entry.sideb }}</h2></li>
+  {% endfor %}
+  {% for argumentz in entrier %}
+  {{ argumentz.argument }}
   {% endfor %}
   </ul>
-
-
+{% for entry in entries %}
+<form action="{{ url_for('add_argument') }}" method=post class=add-entry>
+      <dl>
+        <dt>Argument:
+        <dd><textarea name=argument rows=5 cols=40></textarea>
+        <input type=hidden name=did value={{ entry.did }}>  
+        <dd><input type=submit value=Share>
+      </dl>
+    </form>
+{% endfor %}

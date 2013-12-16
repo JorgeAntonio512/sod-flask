@@ -37,26 +37,42 @@ def teardown_request(exception):
 
 @app.route('/')
 def show_entries():
-    cur = g.db.execute('select id, title, text from entries order by id desc')
+    cur = g.db.execute('select did, title, text from debates order by did desc')
     db_result = cur.fetchall()
-    entries = [dict(id=row[0], title=row[1], text=row[2]) for row in db_result]
+    entries = [dict(did=row[0], title=row[1], text=row[2]) for row in db_result]
     return render_template('show_entries.html', entries=entries)
 
 @app.route('/add', methods=['POST'])
 def add_entry():
-    g.db.execute('insert into entries (title, text) values (?, ?)',
-                 [request.form['title'], request.form['text']])
+    g.db.execute('insert into debates (title, text, sidea, sideb) values (?, ?, ?, ?)',
+                 [request.form['title'], request.form['text'], request.form['sidea'], request.form['sideb']])
     g.db.commit()
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
 
-@app.route('/debate/<int:entries_id>')
-def debate_page(entries_id):
-    query = 'select title, text from entries where id = "{0}"'.format(entries_id)
+
+
+@app.route('/adda', methods=['POST'])
+def add_argument():
+    g.db.execute('insert into arguments (did, argument) values (?, ?)',
+                 [request.form['did'], request.form['argument']])
+    g.db.commit()
+    flash('New argument was successfully posted')
+    return redirect(request.referrer)    
+
+
+
+@app.route('/debate/<int:entries_did>')
+def debate_page(entries_did):
+    query = 'select title, text, sidea, sideb, did from debates where did = "{0}"'.format(entries_did)
     cur = g.db.execute(query)
     db_result = cur.fetchall()
-    entries = [dict(title=row[0], text=row[1]) for row in db_result]
-    return render_template('debate_page.html', entries=entries)
+    entries = [dict(title=row[0], text=row[1], sidea=row[2], sideb=row[3], did=row[4]) for row in db_result]
+    querytwo = 'select argument from arguments where did = "{0}" order by aid desc'.format(entries_did)
+    cuv = g.db.execute(querytwo)
+    db_resultr = cuv.fetchall()
+    entrier = [dict(argument=row[0]) for row in db_resultr]
+    return render_template('debate_page.html', entries=entries, entrier=entrier)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
