@@ -33,11 +33,42 @@ def before_request():
 def teardown_request(exception):
     db = getattr(g, 'db', None)
     if db is not None:
-        db.close()    
+        db.close() 
+
+
+@app.route('/updebate/<int:entries_did>')
+def up_vote(entries_did):
+    g.db.execute('update debates set rating = rating + 1 where did = "{0}"'.format(entries_did))  
+    g.db.commit()
+    return redirect(request.referrer)
+
+
+@app.route('/downdebate/<int:entries_did>')
+def down_vote(entries_did):
+    g.db.execute('update debates set rating = rating - 1 where did = "{0}"'.format(entries_did))
+    g.db.commit()
+    return redirect(request.referrer)
+
+
+@app.route('/upargument/<int:argumentsidea_aid>')
+def up_argument(argumentsidea_aid):
+    g.db.execute('update arguments set rating = rating + 1 where aid = "{0}"'.format(argumentsidea_aid))  
+    g.db.commit()
+    return redirect(request.referrer)
+
+
+@app.route('/downargument/<int:argumentsideb_aid>')
+def down_argument(argumentsideb_aid):
+    g.db.execute('update arguments set rating = rating - 1 where aid = "{0}"'.format(argumentsideb_aid))
+    g.db.commit()
+    return redirect(request.referrer)
+
+
+
 
 @app.route('/')
 def show_entries():
-    cur = g.db.execute('select did, title, text from debates order by did desc')
+    cur = g.db.execute('select did, title, text, rating from debates order by rating desc')
     db_result = cur.fetchall()
     entries = [dict(did=row[0], title=row[1], text=row[2]) for row in db_result]
     return render_template('show_entries.html', entries=entries)
@@ -53,12 +84,20 @@ def add_entry():
 
 
 @app.route('/adda', methods=['POST'])
-def add_argument():
-    g.db.execute('insert into arguments (did, argument) values (?, ?)',
-                 [request.form['did'], request.form['argument']])
+def add_argumenta():
+    g.db.execute('insert into arguments (did, argument, side) values (?, ?, ?)',
+                 [request.form['did'], request.form['argument'], request.form['side']])
     g.db.commit()
     flash('New argument was successfully posted')
-    return redirect(request.referrer)    
+    return redirect(request.referrer) 
+
+@app.route('/addb', methods=['POST'])
+def add_argumentb():
+    g.db.execute('insert into arguments (did, argument, side) values (?, ?, ?)',
+                 [request.form['did'], request.form['argument'], request.form['side']])
+    g.db.commit()
+    flash('New argument was successfully posted')
+    return redirect(request.referrer)       
 
 
 
@@ -68,11 +107,15 @@ def debate_page(entries_did):
     cur = g.db.execute(query)
     db_result = cur.fetchall()
     entries = [dict(title=row[0], text=row[1], sidea=row[2], sideb=row[3], did=row[4]) for row in db_result]
-    querytwo = 'select argument from arguments where did = "{0}" order by aid desc'.format(entries_did)
+    querytwo = 'select argument, aid from arguments where did = "{0}" and side = "0" order by rating desc'.format(entries_did)
     cuv = g.db.execute(querytwo)
     db_resultr = cuv.fetchall()
-    entrier = [dict(argument=row[0]) for row in db_resultr]
-    return render_template('debate_page.html', entries=entries, entrier=entrier)
+    argumentsidea = [dict(argument=row[0], aid=row[1]) for row in db_resultr]
+    querythree = 'select argument, aid from arguments where did = "{0}" and side = "1" order by rating desc'.format(entries_did)
+    cuv = g.db.execute(querythree)
+    db_resultq = cuv.fetchall()
+    argumentsideb = [dict(argument=row[0], aid=row[1]) for row in db_resultq]
+    return render_template('debate_page.html', entries=entries, argumentsidea=argumentsidea, argumentsideb=argumentsideb)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
