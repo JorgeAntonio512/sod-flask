@@ -1,11 +1,12 @@
 <title>State of Debate</title>
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+{% if session.logged_in %}
 <div class=page>
   {% for entry in entries %}  
       <h1>{{ entry.title }}</h1>
     {% endfor %}
   <div class=metanav>
-    <a href="{{ url_for('show_entries') }}">back</a>
+    <a href="{{ url_for('users.show_entries') }}">back</a>
   </div>
   <div class=debate>
     <div class=debatetext> 
@@ -25,7 +26,7 @@
     <div class=argumentgen>
       <div class=argumentgensidea>
 {% for entry in entries %}
-<form action="{{ url_for('add_argumenta') }}" method=post class=add-entry>
+<form action="{{ url_for('users.add_argumenta') }}" method=post class=add-entry>
       <dl>
         <dt>Argument Side A:
         <dd><textarea name=argument rows=5 cols=40></textarea>
@@ -36,7 +37,7 @@
     </form>
       </div>
       <div class=argumentgensideb>
-<form action="{{ url_for('add_argumentb') }}" method=post class=add-entry>
+<form action="{{ url_for('users.add_argumentb') }}" method=post class=add-entry>
       <dl>
         <dt>Argument Side B:
         <dd><textarea name=argument rows=5 cols=40></textarea>
@@ -56,14 +57,14 @@
         <ul class=entries>
         {% for argumentz in argumentsidea %}
         <div class=asidea>
-        <li><a href="/upargument/{{ argumentz.aid }}" style="text-decoration:none; color:orange;">&#11014;</a>{{ argumentz.rating }}<a href="/downargument/{{ argumentz.aid }}" style="text-decoration:none; color:orange;">&#11015;</a>{{ argumentz.argument }}
+        <li><a href="/users/upargument/{{ argumentz.aid }}" style="text-decoration:none; color:orange;">&#11014;</a>{{ argumentz.rating }}<a href="/users/downargument/{{ argumentz.aid }}" style="text-decoration:none; color:orange;">&#11015;</a>{{ argumentz.argument }}
         {% endfor %}
       </ul>
       </div>
       <div class=asideb>
         <ul class=entries>
         {% for argumentz in argumentsideb %}
-        <li><a href="/upargument/{{ argumentz.aid }}" style="text-decoration:none; color:orange;">&#11014;</a>{{ argumentz.rating }}<a href="/downargument/{{ argumentz.aid }}" style="text-decoration:none; color:orange;">&#11015;</a>{{ argumentz.argument }}
+        <li><a href="/users/upargument/{{ argumentz.aid }}" style="text-decoration:none; color:orange;">&#11014;</a>{{ argumentz.rating }}<a href="/users/downargument/{{ argumentz.aid }}" style="text-decoration:none; color:orange;">&#11015;</a>{{ argumentz.argument }}
         {% endfor %}
       </ul>
       </div> 
@@ -71,3 +72,4 @@
 
 
   </div>
+{% endif %}
