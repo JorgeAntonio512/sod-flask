@@ -31,7 +31,7 @@ class Debates(db.Model):
 
       __tablename__ = 'users_debates'
       did = db.Column(db.Integer, primary_key=True)
-      uid = db.Column(db.Integer)
+      id = db.Column(db.Integer)
       title = db.Column(db.Text())
       text = db.Column(db.Text())
       sidea = db.Column(db.Text())
@@ -43,7 +43,7 @@ class Arguments(db.Model):
       __tablename__ = 'users_arguments'
       aid = db.Column(db.Integer, primary_key=True)
       did = db.Column(db.Integer)
-      uid = db.Column(db.Integer)
+      id = db.Column(db.Integer)
       side = db.Column(db.Integer)
       argument = db.Column(db.Text())
       rating = db.Column(db.Integer, server_default="0")

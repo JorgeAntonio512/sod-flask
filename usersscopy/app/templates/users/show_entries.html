@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 {% if session.logged_in %}
+{% for fuckyea in entriegard %}
+<li>
+{{ fuckyea.name }} {{ fuckyea.rating }}
+</li>
+{% endfor %}
 <ul class=entries>
   {% for entry in entries %}
     <li><h2>

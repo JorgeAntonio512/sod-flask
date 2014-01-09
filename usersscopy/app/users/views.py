@@ -90,6 +90,7 @@ def register():
 @mod.route('/updebate/<int:entries_did>')
 def up_vote(entries_did):
     connection = g.db.session.connection()
+    g.db.engine.execute('update users_user set rating = rating + 1 where id in (select id from users_debates where users_debates.did ="{0}")'.format(entries_did))
     g.db.engine.execute('update users_debates set rating = rating + 1 where did = "{0}"'.format(entries_did))  
     #g.db.commit()
     return redirect(request.referrer)
@@ -97,7 +98,8 @@ def up_vote(entries_did):
 
 @mod.route('/downdebate/<int:entries_did>')
 def down_vote(entries_did):
-    connection = g.db.session.connection() 
+    connection = g.db.session.connection()
+    g.db.engine.execute('update users_user set rating = rating - 1 where id in (select id from users_debates where users_debates.did ="{0}")'.format(entries_did)) 
     g.db.engine.execute('update users_debates set rating = rating - 1 where did = "{0}"'.format(entries_did))
     #g.db.commit()
     return redirect(request.referrer)
@@ -106,6 +108,7 @@ def down_vote(entries_did):
 @mod.route('/upargument/<int:argumentsidea_aid>')
 def up_argument(argumentsidea_aid):
     connection = g.db.session.connection()
+    g.db.engine.execute('update users_user set rating = rating + 1 where id in (select id from users_arguments where users_arguments.aid ="{0}")'.format(argumentsidea_aid))
     g.db.engine.execute('update users_arguments set rating = rating + 1 where aid = "{0}"'.format(argumentsidea_aid))  
     #g.db.commit()
     return redirect(request.referrer)
@@ -114,6 +117,7 @@ def up_argument(argumentsidea_aid):
 @mod.route('/downargument/<int:argumentsideb_aid>')
 def down_argument(argumentsideb_aid):
     connection = g.db.session.connection()
+    g.db.engine.execute('update users_user set rating = rating - 1 where id in (select id from users_arguments where users_arguments.aid ="{0}")'.format(argumentsideb_aid))
     g.db.engine.execute('update users_arguments set rating = rating - 1 where aid = "{0}"'.format(argumentsideb_aid))
     #g.db.commit()
     return redirect(request.referrer)
@@ -127,14 +131,16 @@ def show_entries():
     cur = g.db.engine.execute('select did, title, text, rating from users_debates order by rating desc')
     db_result = cur.fetchall()
     entries = [dict(did=row[0], title=row[1], text=row[2], rating=row[3]) for row in db_result]
-    return render_template('users/show_entries.html', entries=entries)
+    currie = g.db.engine.execute('select name, rating from users_user order by rating desc')
+    dby_result = currie.fetchall()
+    entriegard = [dict(name=row[0], rating=row[1]) for row in dby_result]
+    return render_template('users/show_entries.html', entries=entries, entriegard=entriegard)
 
 @mod.route('/add', methods=['POST'])
 def add_entry():
     connection = g.db.session.connection()
-    g.db.engine.execute('insert into users_debates (title, text, sidea, sideb) values (?, ?, ?, ?)',
-                 [request.form['title'], request.form['text'], request.form['sidea'], request.form['sideb']])
-    #g.db.commit()
+    g.db.engine.execute('insert into users_debates (id, title, text, sidea, sideb) values (?, ?, ?, ?, ?)',
+                 [session['user_id'], request.form['title'], request.form['text'], request.form['sidea'], request.form['sideb']])
     flash('New entry was successfully posted')
     return redirect(url_for('users.show_entries'))
 
@@ -143,18 +149,16 @@ def add_entry():
 @mod.route('/adda', methods=['POST'])
 def add_argumenta():
     connection = g.db.session.connection()
-    g.db.engine.execute('insert into users_arguments (did, argument, side) values (?, ?, ?)',
-                 [request.form['did'], request.form['argument'], request.form['side']])
-    #g.db.commit()
+    g.db.engine.execute('insert into users_arguments (did, id, argument, side) values (?, ?, ?, ?)',
+                 [request.form['did'], session['user_id'], request.form['argument'], request.form['side']])
     flash('New argument was successfully posted')
     return redirect(request.referrer) 
 
 @mod.route('/addb', methods=['POST'])
 def add_argumentb():
     connection = g.db.session.connection()
-    g.db.engine.execute('insert into users_arguments (did, argument, side) values (?, ?, ?)',
-                 [request.form['did'], request.form['argument'], request.form['side']])
-    #g.db.commit()
+    g.db.engine.execute('insert into users_arguments (did, id, argument, side) values (?, ?, ?, ?)',
+                 [request.form['did'], session['user_id'], request.form['argument'], request.form['side']])
     flash('New argument was successfully posted')
     return redirect(request.referrer)       
 
