@@ -128,9 +128,9 @@ def down_argument(argumentsideb_aid):
 @mod.route('/')
 def show_entries():
     connection = g.db.session.connection()  
-    cur = g.db.engine.execute('select did, title, text, rating from users_debates order by rating desc')
+    cur = g.db.engine.execute('select users_debates.did, users_debates.title, users_debates.text, users_debates.rating, users_user.name from users_debates, users_user where users_debates.id = users_user.id order by users_debates.rating desc')
     db_result = cur.fetchall()
-    entries = [dict(did=row[0], title=row[1], text=row[2], rating=row[3]) for row in db_result]
+    entries = [dict(did=row[0], title=row[1], text=row[2], rating=row[3], name=row[4]) for row in db_result]
     currie = g.db.engine.execute('select name, rating from users_user order by rating desc')
     dby_result = currie.fetchall()
     entriegard = [dict(name=row[0], rating=row[1]) for row in dby_result]

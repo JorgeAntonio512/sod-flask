@@ -9,7 +9,9 @@
 <ul class=entries>
   {% for entry in entries %}
     <li><h2>
-    	<a href="/users/updebate/{{ entry.did }}" style="text-decoration:none; color:orange;">&#11014;</a>{{ entry.rating }}<a href="/users/downdebate/{{ entry.did }}" style="text-decoration:none; color:orange;">&#11015;</a><a href="/users/debate/{{ entry.did }}">{{ entry.title }}</a></h2>{{ entry.text|safe }}
+    	<a href="/users/updebate/{{ entry.did }}" style="text-decoration:none; color:orange;">&#11014;</a>{{ entry.rating }}<a href="/users/downdebate/{{ entry.did }}" style="text-decoration:none; color:orange;">&#11015;</a><a href="/users/debate/{{ entry.did }}">{{ entry.title }}</a></h2>{{ entry.text|safe }} 
+
+    	CREATED BY: {{ entry.name }}
   {% else %}
     <li><em>Unbelievable.  No entries here so far</em>
   {% endfor %}
