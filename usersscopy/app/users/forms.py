@@ -4,7 +4,7 @@ from wtforms.validators import Required, EqualTo, Email
 
 
 class LoginForm(Form):
-    email = TextField('Email address', [Required(), Email()])
+    email = TextField('Enter email', [Required(), Email()])
     password = PasswordField('Password', [Required()])
 
 

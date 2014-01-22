@@ -6,7 +6,7 @@ from app.users.forms import RegisterForm, LoginForm
 from app.users.models import User
 from app.users.decorators import requires_login
 
-mod = Blueprint('users', __name__, url_prefix='/users')
+mod = Blueprint('users', __name__, url_prefix='')
 
 
 @mod.route('/me/')
@@ -31,27 +31,6 @@ def before_request():
     g.user = None
     if 'user_id' in session:
         g.user = User.query.get(session['user_id'])
-
-
-@mod.route('/login/', methods=['GET', 'POST'])
-def login():
-    """
-    Login form
-    """
-    form = LoginForm(request.form)
-    # make sure data are valid, but doesn't validate password is right
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        # we use werzeug to validate user's password
-        if user and check_password_hash(user.password, form.password.data):
-            # the session can't be modified as it's signed,
-            # it's a safe place to store the user id
-            session['user_id'] = user.id
-            session['logged_in'] = True
-            flash('Welcome %s' % user.name)
-            return redirect(url_for('users.show_entries'))
-        flash('Wrong email or password', 'error-message')
-    return render_template("users/login.html", form=form)
 
 
 @mod.route('/register/', methods=['GET', 'POST'])
@@ -122,7 +101,34 @@ def down_argument(argumentsideb_aid):
     return redirect(request.referrer)
 
 
-@mod.route('/')
+@mod.route('/', methods=['GET', 'POST'])
+def landing_page():
+    if not session.get('logged_in'):
+        """
+    Login form
+    """
+    form = LoginForm(request.form)
+    # make sure data are valid, but doesn't validate password is right
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        # we use werzeug to validate user's password
+        if user and check_password_hash(user.password, form.password.data):
+            # the session can't be modified as it's signed,
+            # it's a safe place to store the user id
+            session['user_id'] = user.id
+            session['logged_in'] = True
+            flash('Welcome %s' % user.name)
+            return redirect(url_for('users.show_entries'))
+        flash('Wrong email or password', 'error-message')
+    return (
+            render_template(
+                'base.html', form=form)
+            )
+    if session.get('logged_in'):
+        return redirect(url_for('users.show_entries'))
+
+
+@mod.route('/home')
 def show_entries():
     connection = g.db.session.connection()
     cur = g.db.engine.execute(
@@ -216,4 +222,9 @@ def createuser():
 def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
-    return redirect(url_for('users.show_entries'))
+    form = LoginForm(request.form)
+    return (
+        render_template(
+            'base.html', form=form
+            )
+    )
