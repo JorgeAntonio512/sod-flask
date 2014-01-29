@@ -1,0 +1,75 @@
+<title>State of Debate</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+{% if session.logged_in %}
+<div class=page>
+  {% for entry in entries %}
+      <h1>{{ entry.title }}</h1>
+    {% endfor %}
+  <div class=metanav>
+    <a href="{{ url_for('users.show_entries') }}">back</a>
+  </div>
+  <div class=debate>
+    <div class=debatetext>
+          {% for entry in entries %}
+          {{ entry.text|safe }}
+    </div>
+    <div class=debatesides>
+      <div class=debatesidea>
+      <h2>{{ entry.sidea }}</h2>
+      </div>
+      <div class=debatesideb>
+        <h2>{{ entry.sideb }}</h2>
+      {% endfor %}
+    </div>
+    </div>
+
+    <div class=argumentgen>
+      <div class=argumentgensidea>
+{% for entry in entries %}
+<form action="{{ url_for('users.add_argumenta') }}" method=post class=add-entry>
+      <dl>
+        <dt>Argument Side A:
+        <dd><textarea name=argument rows=5 cols=40></textarea>
+        <input type=hidden name=did value={{ entry.did }}>
+        <input type=hidden name=side value=0>
+        <dd><input type=submit value=Share>
+      </dl>
+    </form>
+      </div>
+      <div class=argumentgensideb>
+<form action="{{ url_for('users.add_argumentb') }}" method=post class=add-entry>
+      <dl>
+        <dt>Argument Side B:
+        <dd><textarea name=argument rows=5 cols=40></textarea>
+        <input type=hidden name=did value={{ entry.did }}>
+        <input type=hidden name=side value=1>
+        <dd><input type=submit value=Share>
+      </dl>
+    </form>
+      </div>
+{% endfor %}
+    </div>
+
+    <div class=arguments>
+
+
+
+        <ul class=entries>
+        {% for argumentz in argumentsidea %}
+        <div class=asidea>
+        <li><a href="/upargument/{{ argumentz.aid }}" style="text-decoration:none; color:orange;">&#11014;</a>{{ argumentz.rating }}<a href="/downargument/{{ argumentz.aid }}" style="text-decoration:none; color:orange;">&#11015;</a>{{ argumentz.argument }}
+        {% endfor %}
+      </ul>
+      </div>
+      <div class=asideb>
+        <ul class=entries>
+        {% for argumentz in argumentsideb %}
+        <li><a href="/upargument/{{ argumentz.aid }}" style="text-decoration:none; color:orange;">&#11014;</a>{{ argumentz.rating }}<a href="/downargument/{{ argumentz.aid }}" style="text-decoration:none; color:orange;">&#11015;</a>{{ argumentz.argument }}
+        {% endfor %}
+      </ul>
+      </div>
+
+
+
+  </div>
+{% endif %}
