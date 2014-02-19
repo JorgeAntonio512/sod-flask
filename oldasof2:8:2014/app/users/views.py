@@ -1,9 +1,7 @@
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for
 from werkzeug import check_password_hash, generate_password_hash
-from flask.ext.socketio import emit
 
 from app import db
-from app import socketio
 from app.users.forms import RegisterForm, LoginForm
 from app.users.models import User
 from app.users.decorators import requires_login
@@ -231,28 +229,3 @@ def logout():
             'base.html', form=form
             )
     )
-
-
-@socketio.on('my event', namespace='/test')
-def test_message(message):
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my response',
-         {'data': message['data'], 'count': session['receive_count']})
-
-
-@socketio.on('my broadcast event', namespace='/test')
-def test_message(message):
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my response',
-         {'data': message['data'], 'count': session['receive_count']},
-         broadcast=True)
-
-
-@socketio.on('connect', namespace='/test')
-def test_connect():
-    emit('my response', {'data': 'Connected', 'count': 0})
-
-
-@socketio.on('disconnect', namespace='/test')
-def test_disconnect():
-    print('Client disconnected')

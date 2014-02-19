@@ -10,24 +10,6 @@
       <script src="/static/js/bootstrap.min.js" type="text/javascript"</script>
       <script src="/static/js/main.js" type="text/javascript"></script>
       {% endblock %}
-      <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" src="http:////cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
-    <script type="text/javascript" charset="utf-8">
-        $(document).ready(function(){
-            var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
-            socket.on('my response', function(msg) {
-                $('#log').append('<p>Received #' + msg.count + ': ' + msg.data + '</p>');
-            });
-            $('form#emit').submit(function(event) {
-                socket.emit('my event', {data: $('#emit_data').val()});
-                return false;
-            });
-            $('form#broadcast').submit(function(event) {
-                socket.emit('my broadcast event', {data: $('#broadcast_data').val()});
-                return false;
-            });
-        });
-    </script>
     </head>
     <body>
         <div id="header">
@@ -142,43 +124,3 @@
 </div>
 </body>
 </html>
-
-<body>
-    <h1>Flask-SocketIO Test</h1>
-    <h2>Send:</h2>
-    <table>
-        <tr>
-            <td>
-                <form id="emit" method='POST' action='#'>
-                    <textarea name="emit_data" id="emit_data"></textarea>
-                    <div><input type="submit" value="Emit"></div>
-                </form>
-            </td>
-            <td>
-
-                <form id="broadcast" method='POST' action='#'>
-                    {% for entry in entries %}
-                    <textarea name="broadcast_data" id="broadcast_data">{{ entry.did }}</textarea>
-
-                    <div><input type="submit" value=&#11014; style="text-decoration:none; font-size:30px; background-color:transparent; color:orange; border: none"></div>
-
-                </form>
-
-            </td>
-        </tr>
-    </table>
-
-                <h2>Receive:</h2>
-    <div id="log"></div>
-{% endfor %}
-    {% for entry in entries %}
-    <li><h2>
-        <a href="/updebate/{{ entry.did }}" style="text-decoration:none; color:orange;">&#11014;</a>{{ entry.rating }}<a href="/downdebate/{{ entry.did }}" style="text-decoration:none; color:orange;">&#11015;</a><a href="/debate/{{ entry.did }}">{{ entry.title }}</a></h2>{{ entry.text|safe }}
-
-        CREATED BY: {{ entry.name }}
-  {% else %}
-    <li><em>Unbelievable.  No entries here so far</em>
-  {% endfor %}
-</body>
-</html>
-

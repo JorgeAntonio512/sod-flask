@@ -1,5 +1,5 @@
 <title>State of Debate</title>
-<link rel="stylesheet" type='text/css' href="/static/css/style.debate.page.css" />
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
 {% if session.logged_in %}
 <div class=page>
   {% for entry in entries %}
