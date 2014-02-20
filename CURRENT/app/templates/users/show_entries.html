@@ -23,7 +23,7 @@
                 return false;
             });
             $('form#broadcast').submit(function(event) {
-                socket.emit('my broadcast event', {data: $('#broadcast_data').val()});
+                socket.emit('my broadcast event', {data: $(this).serialize()});
                 return false;
             });
         });
@@ -155,29 +155,44 @@
                 </form>
             </td>
             <td>
-
+    <form id="broadcast" method='POST' action='#'>
+    {% for entry in entries %}
                 <form id="broadcast" method='POST' action='#'>
-                    {% for entry in entries %}
+
                     <textarea name="broadcast_data" id="broadcast_data">{{ entry.did }}</textarea>
 
                     <div><input type="submit" value=&#11014; style="text-decoration:none; font-size:30px; background-color:transparent; color:orange; border: none"></div>
-
                 </form>
+    {% endfor %}
 
             </td>
-        </tr>
-    </table>
+            </tr>
+        </table>
 
                 <h2>Receive:</h2>
-    <div id="log"></div>
-{% endfor %}
+        <div id="log"></div>
+
+
+
+
+        {% for entry in entries %}
+    <form id="broadcast" method='POST' action='#'>
+          <textarea name="broadcast_data" id="broadcast_data" value={{ entry.did }}>{{ entry.did }}</textarea>
+          <div><input type="submit" value=&#11014; style="text-decoration:none; font-size:30px; background-color:transparent; color:orange; border: none"></div>
+
+    </form>
+        {% endfor %}
+
+
+
+
+
     {% for entry in entries %}
     <li><h2>
         <a href="/updebate/{{ entry.did }}" style="text-decoration:none; color:orange;">&#11014;</a>{{ entry.rating }}<a href="/downdebate/{{ entry.did }}" style="text-decoration:none; color:orange;">&#11015;</a><a href="/debate/{{ entry.did }}">{{ entry.title }}</a></h2>{{ entry.text|safe }}
 
         CREATED BY: {{ entry.name }}
-  {% else %}
-    <li><em>Unbelievable.  No entries here so far</em>
+    <li><em>Unbelievable. Cool entries here so far</em>
   {% endfor %}
 </body>
 </html>
